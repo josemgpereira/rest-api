@@ -30,15 +30,17 @@ public class UserService {
         return convertListToDto(userList);
     }
 
-    public UserDto findById(Long id) {
+    public Optional<UserDto> findById(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
+        
         if (userOptional.isPresent()) {
-            return convertToDto(userOptional.get());
+            return Optional.of(convertToDto(userOptional.get()));
         }
-        return null;
+        
+        return Optional.empty();
     }
 
-    public UserDto updateById(UserUpdateForm userForm, Long id) {
+    public Optional<UserDto> updateById(UserUpdateForm userForm, Long id) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -49,15 +51,19 @@ public class UserService {
                 user.setEmail(userForm.getEmail());
             }
             userRepository.save(user);
-            return convertToDto(user);
+            return Optional.of(convertToDto(user));
         }
-        return null;
+        return Optional.empty();
     }
 
-    public void deleteById(Long id) {
-        if (userRepository.existsById(id)) {
+    public boolean deleteById(Long id) {
+        
+    	if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
+            return true;
         }
+        
+        return false;
     }
 
     private User convertToBusiness(UserForm form) {

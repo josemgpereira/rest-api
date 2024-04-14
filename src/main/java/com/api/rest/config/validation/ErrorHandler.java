@@ -23,14 +23,16 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public List<ErrorFormDto> handle(MethodArgumentNotValidException exception) {
 
-        List<ErrorFormDto> dto = new ArrayList<>();
+        List<ErrorFormDto> erros = new ArrayList<>();
 
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+        
         fieldErrors.forEach(e -> {
             String errorMessage = messageSource.getMessage(e, LocaleContextHolder.getLocale());
             ErrorFormDto error = new ErrorFormDto(e.getField(), errorMessage);
-            dto.add(error);
+            erros.add(error);
         });
-        return dto;
+        
+        return erros;
     }
 }
